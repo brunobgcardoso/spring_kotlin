@@ -1,6 +1,7 @@
 package com.braga.demo.controller
 
 import com.braga.demo.model.Promocao
+import com.braga.demo.service.interfaces.IPromocaoService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import java.util.concurrent.ConcurrentHashMap
@@ -9,29 +10,24 @@ import java.util.concurrent.ConcurrentHashMap
 @RequestMapping(value = ["/promocoes"])
 class PromocaoController {
     @Autowired
-    lateinit var promocoes: ConcurrentHashMap<Long, Promocao>
+    lateinit var promocaoService: IPromocaoService
 
     @GetMapping()
     fun getAll(@RequestParam(required = false, defaultValue = "") local: String) =
-        promocoes.filter {
-            it.value.local.contains(local, true)
-        }.map(Map.Entry<Long, Promocao>::value).toList()
+        promocaoService.searchByLocal(local)
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable id:Long) = promocoes[id]
+    fun getById(@PathVariable id:Long) =
+        promocaoService.getById(id)
 
     @PostMapping()
-    fun create(@RequestBody promocao : Promocao){
-        promocoes[promocao.id] = promocao
-    }
+    fun create(@RequestBody promocao : Promocao) =
+        promocaoService.create(promocao)
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long){
-        promocoes.remove(id)
-    }
+    fun delete(@PathVariable id: Long) =
+        promocaoService.delete(id)
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, @RequestBody promocao: Promocao){
-        promocoes.remove(id)
-        promocoes[id] = promocao
-    }
+    fun update(@PathVariable id: Long, @RequestBody promocao: Promocao) =
+        promocaoService.update(id, promocao)
 }
