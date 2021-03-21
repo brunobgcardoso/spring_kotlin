@@ -19,8 +19,16 @@ class PromocaoController {
     lateinit var promocaoService: IPromocaoService
 
     @GetMapping()
-    fun getAll(@RequestParam(required = false, defaultValue = "") local: String) : ResponseEntity<List<Promocao>> {
-        var promocoes = promocaoService.searchByLocal(local)
+    fun getAll(@RequestParam(required = false, defaultValue = "1") start: Int,
+               @RequestParam(required = false, defaultValue = "3") size: Int) : ResponseEntity<List<Promocao>> {
+        var promocoes = promocaoService.getAll(start, size)
+        var status = if(promocoes.size == 0) HttpStatus.NOT_FOUND else HttpStatus.OK
+        return ResponseEntity(promocoes, status)
+    }
+
+    @GetMapping("/sort_local")
+    fun getAllByLocal() : ResponseEntity<List<Promocao>> {
+        var promocoes = promocaoService.getAllSortedByLocal()
         var status = if(promocoes.size == 0) HttpStatus.NOT_FOUND else HttpStatus.OK
         return ResponseEntity(promocoes, status)
     }
@@ -63,5 +71,16 @@ class PromocaoController {
         }
 
         return ResponseEntity(Unit, status)
+    }
+
+    @GetMapping("/count")
+    fun count(): ResponseEntity<Map<String, Long>> =
+        ResponseEntity.ok().body(mapOf("count" to promocaoService.count()))
+
+    @GetMapping("/maior_que")
+    fun maiorQue(@RequestParam(required = true, defaultValue = "0") preco: Double): ResponseEntity<List<Promocao>> {
+        var promocoes = promocaoService.getAllByPreçoMaiorQue(preco)
+        var status = if(promocoes.size == 0) HttpStatus.NOT_FOUND else HttpStatus.OK
+        return ResponseEntity(promocoes, status)
     }
 }
