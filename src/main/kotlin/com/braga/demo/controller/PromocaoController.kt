@@ -1,5 +1,7 @@
 package com.braga.demo.controller
 
+import com.braga.demo.exception.PromocaoNotFoundException
+import com.braga.demo.model.ErrorMessage
 import com.braga.demo.model.Promocao
 import com.braga.demo.model.RespostaJSON
 import com.braga.demo.service.interfaces.IPromocaoService
@@ -24,10 +26,12 @@ class PromocaoController {
     }
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable id:Long): ResponseEntity<Promocao?> {
+    fun getById(@PathVariable id:Long): ResponseEntity<Any> {
         var promocao = promocaoService.getById(id)
-        var status = if (promocao == null) HttpStatus.NOT_FOUND else HttpStatus.OK
-        return ResponseEntity(promocao, status)
+        return if (promocao != null)
+            return ResponseEntity(promocao, HttpStatus.OK)
+        else
+            ResponseEntity(ErrorMessage("Promoção não encontrada", "Promoção ${id} não localizada!"), HttpStatus.NOT_FOUND)
     }
 
     @PostMapping()
