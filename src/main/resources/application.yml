@@ -1,12 +1,3 @@
 spring:
-  data-source:
-    driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/tour
-    username: root
-    password: 123456
-    initialization-mode: always
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: create-drop #não subir em prod, mata o banco inteiro
-    generate-ddl: true
+  profiles:
+    active: production
