@@ -18,6 +18,7 @@ class PromocaoController {
     @Autowired
     lateinit var promocaoService: IPromocaoService
 
+
     @GetMapping()
     fun getAll(@RequestParam(required = false, defaultValue = "1") start: Int,
                @RequestParam(required = false, defaultValue = "3") size: Int) : ResponseEntity<List<Promocao>> {
